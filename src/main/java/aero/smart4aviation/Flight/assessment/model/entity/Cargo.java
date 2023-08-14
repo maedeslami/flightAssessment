@@ -18,9 +18,7 @@ public class Cargo {
     @Column
     private Long flightId;
     @OneToMany(cascade = CascadeType.ALL)
-    @Column
     private List<BaggageItem> baggage;
     @OneToMany(cascade = CascadeType.ALL)
-    @Column
     private List<CargoItem> cargo;
 }
