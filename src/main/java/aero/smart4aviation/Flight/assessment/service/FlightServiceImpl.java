@@ -8,8 +8,6 @@ import aero.smart4aviation.Flight.assessment.model.response.AirportStatsResponse
 import aero.smart4aviation.Flight.assessment.model.response.FlightWeightResponse;
 import aero.smart4aviation.Flight.assessment.repository.CargoRepository;
 import aero.smart4aviation.Flight.assessment.repository.FlightRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,11 +25,8 @@ public class FlightServiceImpl implements FlightService {
 
     private final FlightRepository flightRepository;
     private final CargoRepository cargoRepository;
-    private final ObjectMapper objectMapper = new ObjectMapper();
-
     @Override
     public FlightWeightResponse getFlightWeight(Integer flightNumber, String departureDate) {
-//        LocalDateTime departureDate = LocalDateTime.parse(date);
 
         List<Flight> flights = flightRepository.findByFlightNumberAndDepartureDate(flightNumber, departureDate);
 
@@ -58,8 +52,6 @@ public class FlightServiceImpl implements FlightService {
     @Override
     public AirportStatsResponse getAirportStats(String airportCode, String departureDate) {
 
-//        LocalDateTime departureDate = LocalDateTime.parse(date);
-
         List<Flight> departingFlights = flightRepository.findByDepartureAirportIATACodeAndDepartureDate(airportCode, departureDate);
         List<Flight> arrivingFlights = flightRepository.findByArrivalAirportIATACodeAndDepartureDate(airportCode, departureDate);
 
@@ -71,10 +63,8 @@ public class FlightServiceImpl implements FlightService {
     }
 
     public void saveAllFlights(String jsonArray) {
-           // Parse JSON array to the model object
         try {
             List<Flight> flightsList = Arrays.asList(new ObjectMapper().readValue(jsonArray, Flight[].class));
-            // Save the entity to the H2 database
             flightRepository.saveAll(flightsList);
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -83,11 +73,11 @@ public class FlightServiceImpl implements FlightService {
 
     }
 
-    public void saveAllCargos(String jsonArray)  {
+    public void saveAllCargos(String jsonArray) {
         try {
             List<Cargo> cargosList = Arrays.asList(new ObjectMapper().readValue(jsonArray, Cargo[].class));
             cargoRepository.saveAll(cargosList);
-        }catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 

@@ -15,7 +15,6 @@ import static org.hamcrest.Matchers.notNullValue;
 
 
 @RunWith(MockitoJUnitRunner.class)
-
 public class FlightControllerTest {
     @InjectMocks
     private FlightController flightController;
