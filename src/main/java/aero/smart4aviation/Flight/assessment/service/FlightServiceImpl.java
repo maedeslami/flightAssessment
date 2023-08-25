@@ -9,12 +9,14 @@ import aero.smart4aviation.Flight.assessment.model.response.FlightWeightResponse
 import aero.smart4aviation.Flight.assessment.repository.CargoRepository;
 import aero.smart4aviation.Flight.assessment.repository.FlightRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +28,7 @@ public class FlightServiceImpl implements FlightService {
     private final FlightRepository flightRepository;
     private final CargoRepository cargoRepository;
     @Override
-    public FlightWeightResponse getFlightWeight(Integer flightNumber, String departureDate) {
+    public FlightWeightResponse getFlightWeight(Integer flightNumber, LocalDateTime departureDate) {
 
         List<Flight> flights = flightRepository.findByFlightNumberAndDepartureDate(flightNumber, departureDate);
 
@@ -50,21 +52,23 @@ public class FlightServiceImpl implements FlightService {
     }
 
     @Override
-    public AirportStatsResponse getAirportStats(String airportCode, String departureDate) {
+    public AirportStatsResponse getAirportStats(String airportCode, LocalDateTime departureDate) {
 
         List<Flight> departingFlights = flightRepository.findByDepartureAirportIATACodeAndDepartureDate(airportCode, departureDate);
         List<Flight> arrivingFlights = flightRepository.findByArrivalAirportIATACodeAndDepartureDate(airportCode, departureDate);
 
         int departingFlightCount = departingFlights.size();
         int arrivingFlightCount = arrivingFlights.size();
-        int arrivingBaggageCount = arrivingFlights.stream().mapToInt(flight -> cargoRepository.findByFlightId(flight.getFlightId()).map(cargo -> cargo.getBaggage().size()).orElse(0)).sum();
-        int departingBaggageCount = departingFlights.stream().mapToInt(flight -> cargoRepository.findByFlightId(flight.getFlightId()).map(cargo -> cargo.getBaggage().size()).orElse(0)).sum();
-        return new AirportStatsResponse(departingFlightCount, arrivingFlightCount, arrivingBaggageCount, departingBaggageCount);
+        int arrivingBaggagePiecesCount = arrivingFlights.stream().mapToInt(flight -> cargoRepository.findByFlightId(flight.getFlightId()).map(Cargo::getTotalPieces).orElse(0)).sum();
+        int departingBaggagePiecesCount = departingFlights.stream().mapToInt(flight -> cargoRepository.findByFlightId(flight.getFlightId()).map(Cargo::getTotalPieces).orElse(0)).sum();
+        return new AirportStatsResponse(departingFlightCount, arrivingFlightCount, arrivingBaggagePiecesCount, departingBaggagePiecesCount);
     }
 
     public void saveAllFlights(String jsonArray) {
         try {
-            List<Flight> flightsList = Arrays.asList(new ObjectMapper().readValue(jsonArray, Flight[].class));
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.registerModule(new JavaTimeModule());
+            List<Flight> flightsList = Arrays.asList(mapper.readValue(jsonArray, Flight[].class));
             flightRepository.saveAll(flightsList);
         } catch (IOException e) {
             throw new RuntimeException(e);

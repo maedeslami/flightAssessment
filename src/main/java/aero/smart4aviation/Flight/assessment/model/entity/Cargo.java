@@ -21,4 +21,13 @@ public class Cargo {
     private List<BaggageItem> baggage;
     @OneToMany(cascade = CascadeType.ALL)
     private List<CargoItem> cargo;
+
+    public  int getTotalPieces() {
+
+        int totalPieces = 0;
+        for (BaggageItem item : baggage) {
+            totalPieces += item.getPieces();
+        }
+        return totalPieces;
+    }
 }
