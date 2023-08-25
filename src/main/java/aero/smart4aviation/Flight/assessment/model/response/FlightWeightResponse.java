@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class FlightWeightResponse {
-    private double cargoWeight;
-    private double baggageWeight;
-    private double totalWeight;
+    private int cargoWeight;
+    private int baggageWeight;
+    private int totalWeight;
 }
