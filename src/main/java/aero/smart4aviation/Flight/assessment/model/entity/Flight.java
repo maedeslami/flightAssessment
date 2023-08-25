@@ -1,6 +1,7 @@
 package aero.smart4aviation.Flight.assessment.model.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
@@ -27,7 +28,7 @@ public class Flight implements Serializable {
     @Column
     private String arrivalAirportIATACode;
     @Column
-    private String departureDate;
-
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
+    private LocalDateTime departureDate;
 
 }

@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class FlightServiceImplTest {
     void getFlightWeights_shouldReturnCorrectWeights() {
         // Mock flight data
         List<Flight> flights = TestData.generateFlights();
-        when(flightRepository.findByFlightNumberAndDepartureDate(anyInt(), anyString())).thenReturn(flights);
+        when(flightRepository.findByFlightNumberAndDepartureDate(anyInt(), any())).thenReturn(flights);
 
         // Mock cargo data
         List<Cargo> cargoList = TestData.generateCargo();
@@ -45,7 +46,8 @@ public class FlightServiceImplTest {
 
         // Test for flight weights
         Integer flightNumber = 6704;
-        String departureDate = "2023-03-14";
+        LocalDateTime departureDate =LocalDateTime.of(2018,11,25,10,03,45);
+
         FlightWeightResponse expectedWeights = new FlightWeightResponse(1000, 2000, 3000);
 
         FlightWeightResponse result = flightService.getFlightWeight(flightNumber, departureDate);
@@ -59,7 +61,7 @@ public class FlightServiceImplTest {
     void getAirportStatistics_shouldReturnCorrectStatistics() {
         // Mock flight data
         List<Flight> flights = TestData.generateFlights();
-        when(flightRepository.findByFlightNumberAndDepartureDate(anyInt(), anyString())).thenReturn(flights);
+        when(flightRepository.findByFlightNumberAndDepartureDate(anyInt(), any())).thenReturn(flights);
 
         // Mock cargo data
         List<Cargo> cargoList = TestData.generateCargo();
@@ -67,7 +69,7 @@ public class FlightServiceImplTest {
 
         // Test for airport statistics
         String airportCode = "sea";
-        String date = "2023-03-14";
+        LocalDateTime date =LocalDateTime.of(2018,11,25,10,03,45);
         AirportStatsResponse expectedStatistics = new AirportStatsResponse(5, 5, 36, 36);
 
         AirportStatsResponse result = flightService.getAirportStats(airportCode, date);
