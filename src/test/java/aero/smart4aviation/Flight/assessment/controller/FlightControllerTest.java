@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.LocalDateTime;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
@@ -25,7 +27,7 @@ public class FlightControllerTest {
     @Test
     public void shouldReturnWeightsForRequestedFlight() {
         Integer flightNumber = 6704;
-        String date = "2023-01-01";
+        LocalDateTime date =LocalDateTime.of(2023,01,01,10,36,03);
 
         int cargoWeight = 100;
         int baggageWeight = 50;
@@ -43,8 +45,8 @@ public class FlightControllerTest {
 
     @Test
     public void shouldReturnStatisticsForRequestedAirport() {
-        String iataCode = "ANC";
-        String date = "2018-11-25T10:03:45 -04:-30";
+        String iataCode = "YYZ";
+         LocalDateTime date =LocalDateTime.of(2018,11,25,10,03,45);
 
         int departingFlights = 3;
         int arrivingFlights = 5;
